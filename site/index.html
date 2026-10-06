@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>文字数カウント＆文字変換ツール - もじカウント｜moji.hikamers.app</title>
+<meta name="description" content="テキストを貼り付けるだけで文字数・行数・改行・空白を除いた文字数・原稿用紙換算・X（Twitter）換算をリアルタイム表示。全角⇔半角、ひらがな⇔カタカナ、半角カナの変換もワンクリック。すべてブラウザ内で完結し、テキストはサーバーに送信されません。">
+<link rel="canonical" href="https://moji.hikamers.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="もじカウント">
+<meta property="og:title" content="文字数カウント＆文字変換ツール - もじカウント">
+<meta property="og:description" content="貼り付けるだけ。文字数・行数・原稿用紙換算・X（Twitter）換算をリアルタイム表示。全角⇔半角・ひらがな⇔カタカナ変換もワンクリック。テキストは送信されません。">
+<meta property="og:url" content="https://moji.hikamers.app/">
+<meta property="og:image" content="https://moji.hikamers.app/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="文字数カウント＆文字変換ツール - もじカウント">
+<meta name="twitter:description" content="貼り付けるだけ。文字数・原稿用紙・X換算をリアルタイム表示。全角⇔半角・かな変換もワンクリック。">
+<meta name="twitter:image" content="https://moji.hikamers.app/ogp.png">
+<meta name="theme-color" content="#2563eb">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-512.png" type="image/png" sizes="512x512">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebApplication",
+      "name": "もじカウント",
+      "url": "https://moji.hikamers.app/",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web",
+      "browserRequirements": "JavaScript有効のブラウザ",
+      "description": "文字数カウント・全角半角変換・ひらがなカタカナ変換をブラウザ内で完結して行える無料ツール。",
+      "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"},
+      "inLanguage": "ja"
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {"@type": "Question", "name": "入力したテキストはサーバーに送信されますか？", "acceptedAnswer": {"@type": "Answer", "text": "いいえ。文字数カウントも文字変換も、すべてお使いのブラウザ内（JavaScript）で処理されます。入力したテキストがどこかに送信・保存されることはありません。"}},
+        {"@type": "Question", "name": "X（Twitter）の文字数カウントはどう計算していますか？", "acceptedAnswer": {"@type": "Answer", "text": "Xの投稿の仕様に合わせ、半角文字を1、全角文字（日本語など）を2として重み付けした「換算値」で計算しています。上限は280です。実際のXの判定とほぼ一致しますが、絵文字など一部で1〜2文字の差が出ることがあります。"}},
+        {"@type": "Question", "name": "原稿用紙換算とは？", "acceptedAnswer": {"@type": "Answer", "text": "400字詰め原稿用紙に換算して何枚分かを表示します。レポートや小論文の字数チェックに便利です。"}},
+        {"@type": "Question", "name": "どんな文字変換ができますか？", "acceptedAnswer": {"@type": "Answer", "text": "全角⇔半角（英数字・記号）、ひらがな⇔カタカナ、半角カナ→全角カナの変換のほか、空白・改行の一括削除ができます。"}},
+        {"@type": "Question", "name": "スマートフォンでも使えますか？", "acceptedAnswer": {"@type": "Answer", "text": "はい。スマートフォン・タブレットの表示に最適化したレスポンシブ対応です。インストール不要でブラウザだけで使えます。"}}
+      ]
+    }
+  ]
+}
+</script>
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="logo" href="/">
+      <span class="logo-mark" aria-hidden="true">字</span>
+      <span class="logo-text">もじカウント</span>
+    </a>
+    <p class="tagline">文字数カウント＆文字変換ツール</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card tool-card" aria-label="文字数カウントツール">
+    <div class="tool-top">
+      <label class="sr-only" for="input">カウントするテキスト</label>
+      <textarea id="input" placeholder="ここにテキストを入力するか、貼り付けてください。（例：レポートの下書き、Xに投稿する文章 など）&#10;&#10;入力はすべてブラウザ内で処理され、サーバーには送信されません。"></textarea>
+      <div class="statusbar" aria-live="polite">
+        <span id="in-chars" class="stat-pill">文字数 <b>0</b></span>
+        <span id="in-x" class="stat-pill">X換算 <b>0</b>/280</span>
+        <span id="in-paper" class="stat-pill">原稿用紙 <b>0</b>枚</span>
+      </div>
+    </div>
+
+    <div class="stats" role="list">
+      <div class="stat" role="listitem"><span class="stat-label">文字数</span><span class="stat-value" id="c-total">0</span><span class="stat-note">空白・改行を含む</span></div>
+      <div class="stat" role="listitem"><span class="stat-label">改行を除く</span><span class="stat-value" id="c-no-newline">0</span><span class="stat-note"></span></div>
+      <div class="stat" role="listitem"><span class="stat-label">空白を除く</span><span class="stat-value" id="c-no-space">0</span><span class="stat-note">スペース・タブ・全角空白</span></div>
+      <div class="stat" role="listitem"><span class="stat-label">行数</span><span class="stat-value" id="c-lines">0</span><span class="stat-note"></span></div>
+      <div class="stat" role="listitem"><span class="stat-label">段落数</span><span class="stat-value" id="c-paragraphs">0</span><span class="stat-note">空行区切り</span></div>
+      <div class="stat" role="listitem"><span class="stat-label">原稿用紙換算</span><span class="stat-value" id="c-paper">0</span><span class="stat-note">400字詰め・枚</span></div>
+      <div class="stat" role="listitem"><span class="stat-label">X（Twitter）換算</span><span class="stat-value" id="c-x">0</span><span class="stat-note">半角1・全角2で計算 残り<span id="c-x-left">280</span></span></div>
+      <div class="stat" role="listitem"><span class="stat-label">UTF-8バイト数</span><span class="stat-value" id="c-bytes">0</span><span class="stat-note">B</span></div>
+    </div>
+
+    <div class="actions">
+      <div class="action-group">
+        <span class="group-label">文字幅の変換</span>
+        <button type="button" data-act="zen2han">全角 → 半角</button>
+        <button type="button" data-act="han2zen">半角 → 全角</button>
+      </div>
+      <div class="action-group">
+        <span class="group-label">かなの変換</span>
+        <button type="button" data-act="hira2kata">ひらがな → カタカナ</button>
+        <button type="button" data-act="kata2hira">カタカナ → ひらがな</button>
+        <button type="button" data-act="hankaku-kana">半角カナ → 全角カナ</button>
+      </div>
+      <div class="action-group">
+        <span class="group-label">削除</span>
+        <button type="button" data-act="del-space">空白を削除</button>
+        <button type="button" data-act="del-newline">改行を削除</button>
+        <button type="button" data-act="del-blankline">空行を削除</button>
+      </div>
+      <div class="action-group">
+        <span class="group-label">操作</span>
+        <button type="button" data-act="copy" class="primary">コピー</button>
+        <button type="button" data-act="undo">元に戻す</button>
+        <button type="button" data-act="clear">クリア</button>
+      </div>
+    </div>
+    <p class="trust-note">🔒 入力したテキストは<strong>すべてブラウザ内で処理</strong>されます。サーバーへの送信・保存は一切ありません。</p>
+  </section>
+
+  <!-- ===== 広告枠①（ツール下）: AdSense承認後、下のdivを広告タグに置き換え ===== -->
+  <div class="ad-slot" aria-label="広告枠">
+    <span class="ad-label">広告</span>
+    <div class="ad-body">広告枠（AdSense審査通過後に広告が表示されます）</div>
+  </div>
+
+  <section class="card prose">
+    <h2>このツールについて</h2>
+    <p>「もじカウント」は、レポート・ブログ記事・X（旧Twitter）の投稿文・小論文など、<strong>文章の文字数をすぐ確認したいとき</strong>に使える無料ツールです。テキストを入力または貼り付けるだけで、文字数・行数・段落数・原稿用紙換算・X換算・UTF-8バイト数をリアルタイムに表示します。</p>
+    <p>さらに、<strong>全角⇔半角（英数字・記号）</strong>、<strong>ひらがな⇔カタカナ</strong>、<strong>半角カナ→全角カナ</strong>の変換や、空白・改行・空行の一括削除もワンクリックで行えます。表記ゆれの修正や、Word・Excelに貼り付ける前の整形に便利です。</p>
+    <h2>使い方</h2>
+    <ol>
+      <li>上の入力欄にテキストを入力するか、コピーしたテキストを貼り付けます。</li>
+      <li>文字数などの統計がリアルタイムで表示されます。</li>
+      <li>変換したい場合は「全角 → 半角」などのボタンを押します。</li>
+      <li>「コピー」で結果をコピーできます。「元に戻す」で直前の状態に戻せます。</li>
+    </ol>
+    <h2>よくある質問</h2>
+    <details><summary>入力したテキストはサーバーに送信されますか？</summary><p>いいえ。文字数カウントも文字変換も、すべてお使いのブラウザ内（JavaScript）で処理されます。入力したテキストがどこかに送信・保存されることはありません。</p></details>
+    <details><summary>X（Twitter）の文字数カウントはどう計算していますか？</summary><p>Xの投稿仕様に合わせ、半角文字を1、全角文字（日本語など）を2として重み付けした「換算値」で計算しています（上限280）。絵文字など一部の文字で実際と1〜2程度の差が出ることがあります。</p></details>
+    <details><summary>原稿用紙換算とは？</summary><p>400字詰め原稿用紙に換算して何枚分かを表示します。レポートや小論文の字数チェックに便利です。</p></details>
+    <details><summary>文字化けした半角カナ（ﾃｽﾄ など）を直せますか？</summary><p>はい。「半角カナ → 全角カナ」ボタンで「ﾃｽﾄ」を「テスト」に変換できます。濁点付き（ｶﾞ→ガ など）にも対応しています。</p></details>
+    <details><summary>スマートフォンでも使えますか？</summary><p>はい。スマートフォン・タブレットの表示に最適化したレスポンシブ対応です。インストール不要でブラウザだけで使えます。</p></details>
+  </section>
+
+  <!-- ===== 広告枠②（FAQ下）: AdSense承認後、下のdivを広告タグに置き換え ===== -->
+  <div class="ad-slot" aria-label="広告枠">
+    <span class="ad-label">広告</span>
+    <div class="ad-body">広告枠（AdSense審査通過後に広告が表示されます）</div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <nav aria-label="フッターナビ">
+      <a href="/">ホーム</a>
+      <a href="privacy.html">プライバシーポリシー</a>
+    </nav>
+    <p>© 2026 もじカウント（moji.hikamers.app）</p>
+    <p class="foot-note">本ツールの結果は参考値です。重要な用途ではご自身でもご確認ください。</p>
+  </div>
+</footer>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
